@@ -37,7 +37,6 @@ function deleteItem(sm,a) {
             var e=document.getElementById(a)
             var ul = e.parentElement;
             var s = e.parentElement.parentElement
-            
                     axios
                         .delete(`https://crudcrud.com/api/836d68ad68574fe490fa21fb1e94d9dc/orders/${sm}`)
                         .then((res) => {
