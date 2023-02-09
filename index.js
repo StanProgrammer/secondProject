@@ -19,9 +19,10 @@ function OnSubmit(e) {
     }
     e.preventDefault();
     axios
-        .post('https://crudcrud.com/api/53dcf97159c04dbebebc26d3406b84f5/orders', { myObj })
+        .post('https://crudcrud.com/api/836d68ad68574fe490fa21fb1e94d9dc/orders', { myObj })
         .then((res) => {
             showAll(myObj)
+            
         })
         .catch((err) => {
             document.body.innerHTML = document.body.innerHTML + "<h4>Something went Wrong<h4>"
@@ -31,42 +32,25 @@ function OnSubmit(e) {
     detail.value = '';
     table.value = '';
 }
-tab.addEventListener('click', deleteItem)
-function deleteItem(e) {
-    if (e.target.value == 'delete') {
+function deleteItem(sm,a) {
         if (confirm('Are You Sure?')) {
-            var ul = e.target.parentElement;
-            var s = e.target.parentElement.parentElement
-
-            a = ul.textContent
-            const myarr = a.split('-')
-            b = myarr[0]
-            axios
-                .get('https://crudcrud.com/api/53dcf97159c04dbebebc26d3406b84f5/orders')
-                .then((res) => {
-                    // email id is chosen to fetch _id because email id is unique
-                    for (i = 0; i < res.data.length; i++) {
-                        if (b == res.data[i].myObj.id) {
-                            res.data[i].myObj
-                            a = res.data[i]._id
-                            break
-                        }
-                    }
+            var e=document.getElementById(a)
+            var ul = e.parentElement;
+            var s = e.parentElement.parentElement
+            
                     axios
-                        .delete(`https://crudcrud.com/api/53dcf97159c04dbebebc26d3406b84f5/orders/${a}`)
+                        .delete(`https://crudcrud.com/api/836d68ad68574fe490fa21fb1e94d9dc/orders/${sm}`)
                         .then((res) => {
                             s.removeChild(ul)
                         })
                         .catch(err => alert('Not Found'))
-                })
-                .catch(err => console.log(err))
+               
         }
     }
-}
 window.addEventListener('DOMContentLoaded', (event) => {
     function getTodos() {
         axios
-            .get('https://crudcrud.com/api/53dcf97159c04dbebebc26d3406b84f5/orders')
+            .get('https://crudcrud.com/api/836d68ad68574fe490fa21fb1e94d9dc/orders')
             .then(res => show(res))
             .catch(err => console.log(err))
     }
@@ -75,19 +59,20 @@ window.addEventListener('DOMContentLoaded', (event) => {
 function show(res) {
     for (i = 0; i < res.data.length; i++) {
         showAll(res.data[i].myObj, res.data[i]._id)
-
     }
 }
-function showAll(res) {
+function showAll(res,id) {
     let li = document.createElement('li')
     let btn = document.createElement('button')
     li.className = 'list-group-item border-info'
     btn.className = 'form-control bg-info'
     btn.value = 'delete'
+    li.id=res.id
     btn.appendChild(document.createTextNode(`Delete`))
     li.appendChild(document.createTextNode(`${res.id}-${res.price}-${res.detail}-${res.table}`))
-    li.appendChild(btn)
-    tab.appendChild(li)
+    const childHTML = `<button type="button" class="btn btn-danger" id="deleteBtn"onClick= "deleteItem('${id}','${li.id}')">Delete Order</button></li>`;
+    li.innerHTML+=childHTML
+    // li.appendChild(btn)
     if (res.table == 'Electronic Items') {
         t1.appendChild(li)
     }
