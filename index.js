@@ -6,7 +6,6 @@ var t1 = document.getElementById('table1')
 var t2 = document.getElementById('table2')
 var t3 = document.getElementById('table3')
 var myform = document.getElementById('my-form')
-
 myform.addEventListener('submit', OnSubmit)
 function OnSubmit(e) {
     a = Math.floor(Math.random() * 1000000)
@@ -19,10 +18,9 @@ function OnSubmit(e) {
     }
     e.preventDefault();
     axios
-        .post('https://crudcrud.com/api/836d68ad68574fe490fa21fb1e94d9dc/orders', { myObj })
+        .post('https://crudcrud.com/api/52b6fb418fa54f1cac8ec4c344fa3f76/orders', { myObj })
         .then((res) => {
-            showAll(myObj)
-            
+            showAll(myObj,res.data._id)
         })
         .catch((err) => {
             document.body.innerHTML = document.body.innerHTML + "<h4>Something went Wrong<h4>"
@@ -32,24 +30,10 @@ function OnSubmit(e) {
     detail.value = '';
     table.value = '';
 }
-function deleteItem(sm,a) {
-        if (confirm('Are You Sure?')) {
-            var e=document.getElementById(a)
-            var ul = e.parentElement;
-            var s = e.parentElement.parentElement
-                    axios
-                        .delete(`https://crudcrud.com/api/836d68ad68574fe490fa21fb1e94d9dc/orders/${sm}`)
-                        .then((res) => {
-                            s.removeChild(ul)
-                        })
-                        .catch(err => alert('Not Found'))
-               
-        }
-    }
 window.addEventListener('DOMContentLoaded', (event) => {
     function getTodos() {
         axios
-            .get('https://crudcrud.com/api/836d68ad68574fe490fa21fb1e94d9dc/orders')
+            .get('https://crudcrud.com/api/52b6fb418fa54f1cac8ec4c344fa3f76/orders')
             .then(res => show(res))
             .catch(err => console.log(err))
     }
@@ -63,15 +47,43 @@ function show(res) {
 function showAll(res,id) {
     let li = document.createElement('li')
     let btn = document.createElement('button')
-    li.className = 'list-group-item border-info'
+    li.className = 'card mt-3'
     btn.className = 'form-control bg-info'
     btn.value = 'delete'
     li.id=res.id
+    a=li.id
+    btn.onclick = function () { 
+        if(confirm('Are you sure?')){
+        var e=document.getElementById(res.id)
+        var ul=e.parentElement
+        axios
+                        .delete(`https://crudcrud.com/api/52b6fb418fa54f1cac8ec4c344fa3f76/orders/${id}`)
+                        .then((res) => {
+                            ul.removeChild(e)
+                        })
+                        .catch(err => alert('Not Found'))
+    };
+    }
+
     btn.appendChild(document.createTextNode(`Delete`))
-    li.appendChild(document.createTextNode(`${res.id}-${res.price}-${res.detail}-${res.table}`))
-    const childHTML = `<button type="button" class="btn btn-danger" id="deleteBtn"onClick= "deleteItem('${id}','${li.id}')">Delete Order</button></li>`;
-    li.innerHTML+=childHTML
-    // li.appendChild(btn)
+    li.innerHTML=`<table class="table">
+    
+    <tbody>
+      <tr>
+        <th scope="row">Price</th>
+        <td>${res.price}</td>
+      </tr>
+      <tr>
+        <th scope="row">Product Name</th>
+        <td>${res.detail}</td>
+      </tr>
+      <tr>
+        <th scope="row">Category</th>
+        <td>${res.table}</td>
+      </tr>
+    </tbody>
+  </table>`
+    li.appendChild(btn)
     if (res.table == 'Electronic Items') {
         t1.appendChild(li)
     }
@@ -82,4 +94,3 @@ function showAll(res,id) {
         t3.appendChild(li)
     }
 }
-
